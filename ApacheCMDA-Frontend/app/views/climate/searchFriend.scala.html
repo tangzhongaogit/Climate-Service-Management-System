@@ -1,0 +1,74 @@
+@(climateServiceForm: play.data.Form[metadata.ClimateService],email:String,result:String,friend:String)
+
+@import helper._
+
+@scripts = {
+  <script src='@routes.Assets.at("javascripts/edit_button.js")'></script>
+  <link rel="stylesheet" href="//code.jquery.com/ui/1.11.3/themes/smoothness/jquery-ui.css">
+  <script src="//code.jquery.com/jquery-1.10.2.js"></script>
+  <script src="//code.jquery.com/ui/1.11.3/jquery-ui.js"></script>
+  <script type="text/javascript">
+          $(function() {
+            var availableServiceNames = [
+                    "jiyu shi",
+                    "xiaoyu wang",
+                    "yuan liu",
+                    "zhongao tang"
+            ];
+
+            $("#firends").autocomplete({
+              source : availableServiceNames
+            });
+          });
+
+
+  </script>
+}
+
+@main("Find Friend",email,scripts){
+  @flash_message()
+
+    @if(result!= null && result.compareTo("success")==0){
+        <div class="alert alert-success fade in">
+            <strong>YOU HAS ADDED @friend SUCCEEFULLY!</strong>
+            <button class="btn btn-success pull-right" aria-label="Close" data-dismiss="alert">  OK  </button>
+        </div>
+    }
+
+    @if(result!= null && result.compareTo("error")==0){
+        <div class="alert alert-warning fade in">
+            <strong>NO USER HAS BEEN FOUND, PLEASE GIVE THE CORRECT USER!</strong>
+            <button class="btn btn-warning  pull-right" aria-label="Close" data-dismiss="alert">  OK  </button>
+        </div>
+    }
+
+    @if(result!= null && result.compareTo("friendyourself")==0){
+        <div class="alert alert-warning fade in">
+            <strong>You can't add yourself as friend.</strong>
+            <button class="btn btn-warning  pull-right" aria-label="Close" data-dismiss="alert">  OK  </button>
+        </div>
+    }
+
+
+    @if(result!= null && result.compareTo("failure")==0){
+        <div class="alert alert-info fade in">
+            <strong>You and @friend are friends already!</strong>
+            <button class="btn btn-info pull-right" aria-label="Close" data-dismiss="alert">  OK  </button>
+        </div>
+    }
+
+    @*<h1 style="margin-left:490px">Search Service</h1>*@
+  @form(routes.Application.getFindFriendResult(email)) {
+    @*<form action="@routes.ClimateServiceController.getSearchServiceResult(email)" method="get">*@
+    <div class="ui-widget col-sm-offset-3 col-sm-7">
+      <div class = "form-group" align="center" >
+        @inputText(climateServiceForm("Find friend"), 'class -> "form-control",'id -> "firends", 'placeholder -> "Find your friend by email", 'size->70)
+        <input type="text" class="hidden" name="email" value=@email>
+      </div>
+      <div align="center">
+        <input class="btn btn-info" type="submit" value="GO">
+      </div>
+    </div>
+    @*</form>*@
+  }
+}

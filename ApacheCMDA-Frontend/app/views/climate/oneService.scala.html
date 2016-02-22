@@ -1,0 +1,298 @@
+@*******************************************************************************
+* Licensed to the Apache Software Foundation (ASF) under one or more		   *
+* contributor license agreements.  See the NOTICE file distributed with	   *
+* this work for additional information regarding copyright ownership.         *
+* The ASF licenses this file to You under the Apache License, Version 2.0     *
+* (the "License"); you may not use this file except in compliance with        *
+* the License.  You may obtain a copy of the License at                       *
+*                                                                             *
+*    http://www.apache.org/licenses/LICENSE-2.0                               *
+*																			   *
+* Unless required by applicable law or agreed to in writing, software         *
+* distributed under the License is distributed on an "AS IS" BASIS,           *
+* WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.    *
+* See the License for the specific language governing permissions and         *
+* limitations under the License.											   *
+*******************************************************************************@
+
+@(url: String, email: String, id: String,climateServices: List[metadata.ClimateService],friendList: List[String])
+
+@import helper._
+
+@scripts = {
+    <style type="text/css">
+    /*override atwho's style*/
+    .atwho-inserted {
+    color: #4183C4;
+    }
+    /*.atwho-query {*/
+    /*color: #4183C4;*/
+    /*}*/
+    </style>
+    <script src='@routes.Assets.at("javascripts/jquery.atwho.js")'
+    type="text/javascript"></script>
+    <link href='@routes.Assets.at("stylesheets/Hashstyle.css")'
+    rel="stylesheet" />
+    <link href='@routes.Assets.at("stylesheets/jquery.atwho.css")'
+    rel="stylesheet" />
+    <script type="text/javascript" src="http://ichord.github.io/Caret.js/src/jquery.caret.js"></script>
+    <script type="text/javascript">
+            $(document).ready(function(){
+                var obj = document.getElementById("iframe");
+                resizeIframe(obj);
+            });
+
+            function resizeIframe(obj) {
+                obj.style.height = obj.contentWindow.document.body.scrollHeight + 'px';
+            }
+
+            $(function(){
+                var idNumber = 0;
+                var ServiceList = [];
+                var friendsList = [];
+                var i = 0;
+                friendsList[0] = "Hello";
+                @for(climateService <- climateServices) {
+                ServiceList[i] = ("@climateService.getClimateServiceName");
+                i = i + 1;
+                }
+                i = 0;
+                @for(friend <- friendList) {
+                    friendsList[i] = ("@friend");
+                    i = i + 1;
+                }
+                console.log(friendsList);
+//        console.log(ServiceList);
+                var tags = ["ShiZong","Tangzhongao","WangXiaoYu","LiuYuan"];
+                $('#commentActionArea').atwho({
+                    at: "@@",
+                    data: friendsList,
+                    limit: 200,
+                });
+                $('#commentActionArea').atwho({
+                    at: "#",
+                    data: ServiceList,
+                    limit: 200,
+                });
+                $.ajax({
+                    type: 'GET',
+                    url: 'http://localhost:9034/posts/getAllPosts/json',
+                    success: function(data) {
+                        console.log(data);
+
+                        $.each($.parseJSON(data), function(i, aComment) {
+                            var climateID = aComment.climateServiceID;
+                            if (climateID == @id){
+                                var postTime = new Date(aComment.postTime);
+                                idNumber = idNumber + 1;
+                                var year = postTime.getFullYear();
+                                var month = postTime.getMonth() + 1;
+                                var day = postTime.getDate();
+                                var hours=postTime.getHours();
+                                var minutes = postTime.getMinutes();
+                                if(parseInt(minutes) < 10){
+                                    minutes = "0" + minutes;
+                                }
+                                var seconds =postTime.getSeconds();
+                                if(parseInt(seconds) < 10){
+                                    seconds = "0" + seconds;
+                                }
+                                var dateString = year+"-"+month+"-"+day+" "+hours+":"+minutes+":"+seconds;
+                                $("#post").append("<div id='"+idNumber+"'class='col-md-8 blogShort'></div>");
+                                var imgString = "<img id='userIcon' class='pull-left img-responsive thumb margin10 img-thumbnail' src='@routes.Assets.at("images/Usericon.jpg")'>";
+                                $("#"+idNumber).append("<h4>By " +aComment.user +"</h4>");
+                                $("#"+idNumber).append("<input id='rating" +idNumber +"' value="+ aComment.grade +" class='rating userRating' type='number' data-size='xs' readonly/>");
+                                $("#rating"+idNumber).rating('create');
+                                $("#"+idNumber).append(imgString);
+                                $("#"+idNumber).append("</img>");
+                                $("#"+idNumber).append("<article><p>"+aComment.comment+"<article></p>");
+                                $("#"+idNumber).append("<p class='text-right'>"+dateString+"</p>");
+                            }
+                        });
+                    },
+                    error: function() {
+                        alert('error');
+                    }
+                });
+                $("#submitComment").click(function(){
+                    var comment = $("#commentActionArea").text();
+                    var atService = "null";
+                    var Count = 1;
+                    console.log(comment);
+                    var start_index = -1;
+                    $('.atwho-inserted').each(function(){
+                        if($(this).text().indexOf("#") > -1) {
+                            var hashTagInThis  = $(this).text().indexOf("#");
+                            var hashTagIndex = comment.indexOf("#",start_index+1 );
+                            start_index = hashTagIndex;
+                        } else {
+                            hashTagInThis = $(this).text().indexOf("@@");
+                            var hashTagIndex = comment.indexOf("@@",start_index+1);
+                            start_index = hashTagIndex;
+                        }
+                        console.log(hashTagIndex + "......");
+                        console.log(hashTagInThis + "dddddd");
+                        if(hashTagIndex > -1){
+                            var hashText = $(this).text();
+                            console.log(hashText);
+                            Count = 2;
+                            SymbolIndex = hashTagIndex + hashText.length;
+                            comment = comment.substr(0,SymbolIndex) + comment.substr(SymbolIndex + 1);
+//                            hashTagIndex = comment.indexOf("#");
+//                            comment = comment.substr(0,hashTagIndex)+ "<span>" + comment.substr(hashTagIndex,hashTagIndex+hashText.length)
+//                                    +"</span>" + comment.substr(hashTagIndex+hashText.length);
+//                            start_index = hashTagIndex+hashText.length;
+                            //            console.log(SymbolIndex);
+                            console.log(comment);
+                            if(hashText.indexOf("#") > -1) {
+                                atService = hashText.substring(1);
+                            }
+                        }
+                    });
+//                    var hashText = $("#commentActionArea").find(".atwho-inserted").text();
+//                    if(hashText != ""){
+//                    }
+                    console.log(atService);
+                    if(comment.length > 0) {
+                        var star_rating = $("#commentRating").val();
+                        var date = new Date();
+                        var year = date.getFullYear();
+                        var month = date.getMonth() + 1;
+                        var day = date.getDate();
+                        var hours=date.getHours();
+                        var minutes = date.getMinutes();
+                        var email = "@email";
+                        if(email=="")
+                            email = "Guest";
+                        var serviceID = -1;
+                        serviceID = "@id";
+                        if(parseInt(minutes) < 10){
+                            minutes = "0" + minutes;
+                        }
+                        var seconds =date.getSeconds();
+                        var dateString = year+"-"+month+"-"+day+" "+hours+":"+minutes+":"+seconds;
+                        var commentContent = new Object();
+                        commentContent.comment = comment;
+                        commentContent.userEmail = email;
+                        commentContent.climateId = serviceID;
+                        commentContent.grade = star_rating;
+                        commentContent.createTime = date.getTime();
+                        commentContent.atService = atService;
+                        var commentJson = JSON.stringify(commentContent);
+//                console.log(commentJson);
+                        $.ajax({
+                            type: 'POST',
+                            url: 'http://localhost:9034/posts/add',
+                            data: commentJson,
+                            dataType: 'json',
+                            contentType: 'application/json',
+                            success: function(){
+                                $('#CommentPrompt').modal('show');
+                                idNumber = idNumber + 1;
+                                $("#post").append("<div id='"+idNumber+"'class='col-md-8 blogShort'></div>");
+                                var imgString = "<img id='userIcon' class='pull-left img-responsive thumb margin10 img-thumbnail' src='@routes.Assets.at("images/Usericon.jpg")'>";
+                                $("#"+idNumber).append('<h4>By '+email+'</h4>');
+                                $("#"+idNumber).append("<input id='rating" +idNumber +"' value="+ star_rating +" class='rating userRating' type='number' data-size='xs' readonly/>");
+                                $("#rating"+idNumber).rating('create');
+                                $("#"+idNumber).append(imgString);
+                                $("#"+idNumber).append("</img>");
+                                $("#"+idNumber).append("<article><p>"+comment+"<article></p>");
+                                $("#"+idNumber).append("<p class='text-right'>"+dateString+"</p>");
+                                $("#commentActionArea").html("");
+                            },
+                            error: function() {
+                                alert('error' + commentJson);
+                            }
+                        });
+                    }
+                });
+            });
+    </script>
+}
+
+@main("Service",email, scripts) {
+
+
+
+    <script type="text/javascript">
+    </script>
+
+    <style>
+    #commentActionArea{
+    resize: none;
+    width: 760px;
+    margin-left: 5px;
+    }
+    #commentActionContainer{
+    border:1px solid #9e9e9e;
+    width: 780px;
+    margin-top: 10px;
+    margin-left: 12px;
+    }
+
+    #commentAction{
+    margin-top: 5px;
+    }
+
+    #userIcon{
+    height: 50px;
+    }
+
+    .text-right{
+    font-size: x-small;
+    }
+
+    .blogShort{
+    border:1px solid dimgray;
+    margin-top: 10px;
+    }
+    #iframe{
+    margin-top: 100px;;
+    }
+
+    article{
+    margin-left: 90px;
+    }
+    </style>
+    <iframe id="iframe" width="100%" height="600px" src="@url" frameborder="0" >
+    </iframe>
+
+
+    <div id="commentArea" class="container">
+        <h2>Comment Area</h2>
+        <hr/>
+        <div id="post">
+        </div>
+    </div>
+    <div id = "commentActionContainer" class="container pull-left">
+        <div class="row" id="commentAction">
+            <div id="commentActionArea" class="inputor" placeholder="Please enter your comment." contentEditable="true"></div>
+        </div>
+        <div class="row">
+            <div class="col-sm-7 col-md-7">
+                <input id="commentRating" class="rating" type="number" data-size="xs"/>
+            </div>
+            <div class="col-sm-5 col-md-5">
+                <button id="submitComment" class="btn btn-success pull-right">Submit</button>
+            </div>
+        </div>
+    </div>
+    <div class="modal fade" id="CommentPrompt" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel">
+        <div class="modal-dialog" role="document">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+                    <h4 class="modal-title" id="exampleModalLabel">Congratulations!</h4>
+                </div>
+                <div class="modal-body">
+                    <form>
+                        <span>Your post has been submitted to the server successfully</span>
+                    </form>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-success" data-dismiss="modal">OK</button>
+                </div>
+            </div>
+        </div>
+    </div>
+}

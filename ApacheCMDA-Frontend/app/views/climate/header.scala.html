@@ -1,0 +1,107 @@
+@*******************************************************************************
+ * Licensed to the Apache Software Foundation (ASF) under one or more		   *
+ * contributor license agreements.  See the NOTICE file distributed with	   *
+ * this work for additional information regarding copyright ownership.         *
+ * The ASF licenses this file to You under the Apache License, Version 2.0     *
+ * (the "License"); you may not use this file except in compliance with        *
+ * the License.  You may obtain a copy of the License at                       *
+ *                                                                             *
+ *    http://www.apache.org/licenses/LICENSE-2.0                               *
+ *																			   *
+ * Unless required by applicable law or agreed to in writing, software         *
+ * distributed under the License is distributed on an "AS IS" BASIS,           *
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.    *
+ * See the License for the specific language governing permissions and         *
+ * limitations under the License.											   *
+ *******************************************************************************@
+
+
+@()
+<style>
+	#myButtons{
+		margin-top: 15px;
+	}
+</style>
+<div class="navbar navbar-default navbar-fixed-top" role="navigation">
+	<div class="container">
+		<div class="row">
+			<div class="navbar-header">
+				<button type="button" class="navbar-toggle" data-toggle="collapse"
+				data-target=".navbar-collapse">
+					<span class="sr-only">Toggle navigation</span> <span
+				class="icon-bar"></span> <span class="icon-bar"></span> <span
+				class="icon-bar"></span>
+				</button>
+				<a class="navbar-brand navbar-collapse collapse" style="padding-bottom: 0 ;" href="/climate">
+					<img
+					src='@routes.Assets.at("images/NASA_JPL_logo.png")' style="height: 40px ; width: 220px ;">
+					<img
+					src='@routes.Assets.at("images/logo.png")' style="height: 15px ; width: 250px ;">
+				</a>
+			</div>
+			<div id="myButtons" class="navbar-collapse collapse" style="height:">
+				<form class="navbar-form navbar-right" role="register">
+					<a class="btn btn-primary" href="/climate/sign" role="button">Register&raquo;</a>
+				</form>
+				<ul class="nav navbar-nav navbar-right">
+
+					@*<form class="navbar-form navbar-right" role="login">*@
+						@*<div class="form-group">*@
+							@*<input class="form-control" id="ex1" type="text" placeholder="Username">*@
+							@*<input type="password" class="form-control" placeholder="Password">*@
+						@*</div>*@
+						@*<button type="submit" class="btn btn-success" >Login</button>*@
+					@*</form>*@
+
+				<div class="navbar-form navbar-right">
+					@helper.form(routes.Application.login){
+						<div class="form-group">
+							<input class="form-control" id="ex1" type="email" name="email" placeholder="Email" >
+							<input type="password" class="form-control" name="password" placeholder="Password" >
+							<button type="submit" class="btn btn-success" >Login</button>
+						</div>
+					}
+				</div>
+
+					<li class="dropdown"><a href="#"
+					class="dropdown-toggle" data-toggle="dropdown">Service<b class="caret"></b> </a>
+						<ul class="dropdown-menu">
+							<li><a href="@routes.ClimateServiceController.searchService()">Search Service </a></li>
+							<li><a href="@routes.ClimateServiceController.climateServices()">Service List</a></li>
+							<li><a href="@routes.ClimateServiceController.mostPopularClimateServices()">Most Popular Service</a></li>
+							<li><a href="@routes.ClimateServiceController.mostRecentlyAddedClimateServices()">Recent Added Service</a></li>
+							<li><a href="@routes.ClimateServiceController.mostRecentlyUsedClimateServices()">Recent Used  Service</a></li>
+							<li><a href="@routes.ClimateServiceController.top3()">Top 3 Graded Service</a></li>
+						</ul>
+					</li>
+					<li class="dropdown"><a href="#"
+					class="dropdown-toggle" data-toggle="dropdown">Dataset<b
+					class="caret"></b> </a>
+						<ul class="dropdown-menu">
+
+							<li><a href="@routes.DatasetController.datasetList()">Dataset List</a></li>
+							<li><a href="@routes.DatasetController.searchDataset()">Search dataset</a></li>
+						</ul>
+					</li>
+					@*<li class="dropdown"><a href="#"*@
+					@*class="dropdown-toggle" data-toggle="dropdown">Support<b*@
+					@*class="caret"></b></a>*@
+					@*<ul class="dropdown-menu">*@
+					@*<li><a href="@routes.AccountController.getServiceLog">Service Execution Log List</a></li>*@
+					@*<li><a href="@routes.AccountController.searchServiceLog">Service Execution Log Search</a></li>*@
+					@*</ul>*@
+					@*</li>*@
+					<li class="dropdown"><a href="#"
+					class="dropdown-toggle" data-toggle="dropdown">About<b
+					class="caret"></b> </a>
+						<ul class="dropdown-menu">
+							<li><a href="@routes.ClimateServiceController.home()">Home</a></li>
+							<li><a href="@routes.AboutusController.aboutUs()">About Us</a></li>
+							<li><a href="@routes.AboutusController.aboutProject()">About project</a></li>
+						</ul>
+					</li>
+				</ul>
+			</div>
+		</div>
+	</div>
+</div>

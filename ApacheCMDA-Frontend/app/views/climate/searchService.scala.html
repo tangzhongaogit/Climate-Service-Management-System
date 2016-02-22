@@ -1,0 +1,131 @@
+@(climateServiceForm: play.data.Form[metadata.ClimateService],email:String,comment:String)
+
+    @import helper._
+
+    @scripts = {
+        <script src='@routes.Assets.at("javascripts/edit_button.js")'></script>
+        <link rel="stylesheet" href="//code.jquery.com/ui/1.11.3/themes/smoothness/jquery-ui.css">
+        @*<script src="//code.jquery.com/jquery-1.10.2.js"></script>*@
+        <script src="//code.jquery.com/ui/1.11.3/jquery-ui.js"></script>
+        <script type="text/javascript">
+                $(function() {
+                    var availableServiceNames = [
+                        "2-D-Variable-Map",
+                        "2-D-Variable-Zonal-Mean",
+                        "2-D-Variable-Time-Series",
+                        "3-D-Variable-2-D-Slice",
+                        "3-D-Variable-Zonal-Mean",
+                        "3-D-Variable-Average-Vertical-Profile",
+                        "Scatter-and-Histogram-Plot-of-Two-Variables",
+                        "Difference-Plot-of-Two-Time-Averaged-Variables",
+                        "Conditional-Sampling-with-One-Variable",
+                        "Conditional-Sampling-with-Two-Variables",
+                        "Time-Lagged-Correlation-Map-of-Two-Variables",
+                        "Regrid-and-Download"
+                    ];
+
+                    $("#serviceName").autocomplete({
+                        source : availableServiceNames
+                    });
+                });
+
+                $(function(){
+                    var idNumber = 0;
+                    var JsonComment = "@comment";
+                    JsonComment = JsonComment.replace(/&quot;/g,'"');
+                    JsonComment = JsonComment.replace(/&lt;/g,'<');
+                    JsonComment = JsonComment.replace(/&gt;/g,'>');
+                    JsonComment = JsonComment.replace(/&#x27;/g,"'");
+                    console.log(JsonComment);
+                    $.each($.parseJSON(JsonComment), function(i, aComment) {
+                        var climateID = aComment.climateServiceID;
+                        var postTime = new Date(aComment.postTime);
+                        idNumber = idNumber + 1;
+                        var year = postTime.getFullYear();
+                        var month = postTime.getMonth() + 1;
+                        var day = postTime.getDate();
+                        var hours=postTime.getHours();
+                        var minutes = postTime.getMinutes();
+                        if(parseInt(minutes) < 10){
+                            minutes = "0" + minutes;
+                        }
+                        var seconds =postTime.getSeconds();
+                        if(parseInt(seconds) < 10){
+                            seconds = "0" + seconds;
+                        }
+                        var dateString = year+"-"+month+"-"+day+" "+hours+":"+minutes+":"+seconds;
+                        $("#post").append("<div id='"+idNumber+"'class='col-md-8 blogShort'></div>");
+                        var imgString = "<img id='userIcon' class='pull-left img-responsive thumb margin10 img-thumbnail' src='@routes.Assets.at("images/Usericon.jpg")'>";
+                        $("#"+idNumber).append("<h4>By " +aComment.user +"</h4>");
+                        $("#"+idNumber).append("<input id='rating" +idNumber +"' value="+ aComment.grade +" class='rating userRating' type='number' data-size='xs' readonly/>");
+                        $("#rating"+idNumber).rating('create');
+                        $("#"+idNumber).append(imgString);
+                        $("#"+idNumber).append("</img>");
+                        $("#"+idNumber).append("<article><p>"+aComment.comment+"<article></p>");
+                        $("#"+idNumber).append("<p class='text-right'>"+dateString+"</p>");
+                    });
+                });
+        </script>
+        <style>
+        #commentActionArea{
+        resize: none;
+        width: 760px;
+        margin-left: 5px;
+        }
+        #commentActionContainer{
+        border:1px solid #9e9e9e;
+        width: 780px;
+        margin-top: 10px;
+        }
+
+        #commentAction{
+        margin-top: 5px;
+        }
+
+        #userIcon{
+        height: 50px;
+        }
+
+        .text-right{
+        font-size: x-small;
+        }
+
+        .blogShort{
+        border:1px solid dimgray;
+        margin-top: 10px;
+        }
+
+        article{
+        margin-left: 90px;
+        }
+        </style>
+    }
+
+    @main("Search Service",email,scripts){
+
+        @if(comment!= null && comment.compareTo("")==0){
+            <div class="alert alert-warning fade in">
+                <strong>No results found!</strong>
+                <button class="btn btn-warning  pull-right" aria-label="Close" data-dismiss="alert">  OK  </button>
+            </div>
+        }
+        @flash_message()
+        @*<h1 style="margin-left:490px">Search Service</h1>*@
+        @form(routes.ClimateServiceController.getSearchServiceResult(email)) {
+            @*<form action="@routes.ClimateServiceController.getSearchServiceResult(email)" method="get">*@
+            <div class="ui-widget col-sm-offset-3 col-sm-7 col-md-offset-3 col-md-7 col-lg-offset-3 col-lg-7">
+                <div class = "form-group" align="center" >
+                    @inputText(climateServiceForm("Search"), 'class -> "form-control",'id -> "serviceName", 'placeholder -> "Service Name", 'size->70)
+                    <input type="text" class="hidden" name="email" value=@email>
+                </div>
+                <div align="center">
+                    <input class="btn btn-info" type="submit" value="GO">
+                </div>
+            </div>
+            @*</form>*@
+        }
+        <div id="commentArea" class="container col-lg-offset-3 col-lg-11">
+            <div id="post">
+            </div>
+        </div>
+    }

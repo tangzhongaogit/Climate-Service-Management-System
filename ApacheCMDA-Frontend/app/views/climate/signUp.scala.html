@@ -1,0 +1,68 @@
+@(form: Form[User],flag:String)
+  <html>
+
+    <style>
+    .form-signin {
+    max-width: 300px;
+    padding: 19px 29px 29px;
+    margin: 0 auto 20px;
+    background-color: #fff;
+    border: 1px solid #e5e5e5;
+    -webkit-border-radius: 5px;
+    -moz-border-radius: 5px;
+    border-radius: 5px;
+    -webkit-box-shadow: 0 1px 2px rgba(0,0,0,.05);
+    -moz-box-shadow: 0 1px 2px rgba(0,0,0,.05);
+    box-shadow: 0 1px 2px rgba(0,0,0,.05);
+    }
+    </style>
+  </html>
+
+
+
+  @main("Sign Up",null) {
+
+  @if(flag == "failure"){
+    <div class="alert alert-danger fade in">
+      <strong>User ID or Email has been used!</strong>
+      <button class="btn btn-danger pull-right" aria-label="Close" data-dismiss="alert">  OK  </button>
+    </div>
+  }
+
+
+  @if(flag == "invalid"){
+    <div class="alert alert-danger">
+      <strong>Invalid User ID or Password!</strong>
+      <button class="btn btn-danger pull-right" aria-label="Close" data-dismiss="alert">  OK  </button>
+    </div>
+  }
+
+    @helper.form(routes.Application.authenticate) {
+      <div class="form-signin">
+        <h3 class="form-signin-heading" align="center">Sign Up</h3>
+        <hr>
+        <div class="form-group" align="center">
+          <input type="userName" name="userName" placeholder="Username" value="@form("userName").value">
+        </div>
+
+        <div class="form-group" align="center">
+          <input type="email" name="email" placeholder="Email" value="@form("email").value">
+        </div>
+        <div class="form-group" align="center">
+          <input type="password" name="password" placeholder="Password" value="@form("password").value">
+        </div>
+
+        <div class="form-group" align="center">
+          <input type="firstName" name="firstName" placeholder="Firstname" value="@form("firstName").value">
+        </div>
+        <div class="form-group" align="center">
+          <input type="lastName" name="lastName" placeholder="Lirstname" value="@form("lastName").value">
+        </div>
+        <hr>
+        <p align="center">
+          <button class="btn btn-primary" type="submit">Sign Up for Service</button>
+        </p>
+      </div>
+    }
+
+  }

@@ -1,0 +1,55 @@
+@(climateServiceForm: play.data.Form[metadata.ClimateService])
+
+@import helper._
+
+@scripts = {
+  <script src='@routes.Assets.at("javascripts/edit_button.js")'></script>
+  <link rel="stylesheet" href="//code.jquery.com/ui/1.11.3/themes/smoothness/jquery-ui.css">
+  <script src="//code.jquery.com/jquery-1.10.2.js"></script>
+  <script src="//code.jquery.com/ui/1.11.3/jquery-ui.js"></script>
+  <script type="text/javascript">
+          $(function() {
+            var availableServiceNames = [
+                    "2-D-Variable-Map",
+                    "2-D-Variable-Zonal-Mean",
+                    "2-D-Variable-Time-Series",
+                    "3-D-Variable-2-D-Slice",
+                    "3-D-Variable-Zonal-Mean",
+                    "3-D-Variable-Average-Vertical-Profile",
+                    "Scatter-and-Histogram-Plot-of-Two-Variables",
+                    "Difference-Plot-of-Two-Time-Averaged-Variables",
+                    "Conditional-Sampling-with-One-Variable",
+                    "Conditional-Sampling-with-Two-Variables",
+                    "Time-Lagged-Correlation-Map-of-Two-Variables",
+                    "Regrid-and-Download"
+            ];
+
+
+
+            $("#serviceName").autocomplete({
+              source : availableServiceNames
+            });
+          });
+
+
+  </script>
+}
+
+@main("Search Service", scripts){
+  @flash_message()
+  @*<h1 style="margin-left:490px">Search Service</h1>*@
+  @helper.form(routes.ClimateServiceController.getSearchServiceResult()) {
+    <div class="ui-widget col-sm-offset-3 col-sm-7">
+      <div class = "form-group" align="center" >
+      @inputText(climateServiceForm("Search Service"), 'class -> "form-control",'id -> "serviceName", 'placeholder -> "Service Name", 'size->70)
+      </div>
+
+
+      <div align="center">
+
+        <input class="btn btn-info" type="submit" value="Search">
+      </div>
+    </div>
+
+  }
+}

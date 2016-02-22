@@ -1,0 +1,53 @@
+# Routes
+# This file defines all application routes (Higher priority routes first)
+# ~~~~
+
+# Home page
+GET         /home                                                controllers.ClimateServiceController.home(email ?= null, vfile ?= null, dataset ?= null)
+GET 		/													 controllers.ClimateServiceController.home(email ?= null, vfile ?= null, dataset ?= null)
+GET		    /createSuccess				                         controllers.Application.createSuccess()
+
+# BugReporting
+GET         /bugs                                                controllers.BugReportController.reports()
+GET         /newReport                                           controllers.BugReportController.newReport()
+GET         /bug/list                                            controllers.BugReportController.list()
+POST        /delete/report                                       controllers.BugReportController.deleteReport()
+POST        /solve/report                                        controllers.BugReportController.solveReport()
+
+# About Us
+GET         /aboutus                                             controllers.AboutusController.aboutUs(email ?= null)
+GET         /aboutProject                                        controllers.AboutusController.aboutProject(email ?= null)
+
+# Climate Model
+GET			/climate											controllers.ClimateServiceController.home(email ?= null, vfile ?= null, dataset ?= null)
+GET			/climate/tutorial									controllers.ClimateServiceController.tutorial()
+GET			/climate/climateServices							controllers.ClimateServiceController.climateServices(email ?= null)
+GET			/climate/mostRecentlyAddedClimateServices			controllers.ClimateServiceController.mostRecentlyAddedClimateServices(email ?= null)
+GET			/climate/mostRecentlyUsedClimateServices			controllers.ClimateServiceController.mostRecentlyUsedClimateServices(email ?= null)
+GET			/climate/mostPopularClimateServices					controllers.ClimateServiceController.mostPopularClimateServices(email ?= null)
+GET			/climate/top3					                    controllers.ClimateServiceController.top3(email ?= null)
+
+POST		/climate/new/climateServices    					controllers.ClimateServiceController.newClimateService()
+POST    	/climate/delete/climateServices   					controllers.ClimateServiceController.deleteClimateService()
+POST		/climate/download/climateServices					controllers.ClimateServiceController.downloadClimateService()
+POST		/climate/edit/climateServices						controllers.ClimateServiceController.editClimateService()
+GET			/climate/new/climateServices						controllers.ClimateServiceController.addClimateServices()
+GET			/climate/oneService									controllers.ClimateServiceController.oneService(url ?= null,email ?= null,id ?= null)
+
+#Keyword search
+GET 		/climate/datasets									controllers.DatasetController.datasetList(email ?= null)
+GET			/climate/searchDataSet 					 			controllers.DatasetController.searchDataset(email ?= null)
+GET 		/climate/getSearchResult				 			controllers.DatasetController.getSearchResult(email ?= null)
+
+#Map static resources from the /public folder to the /assets URL path
+GET     	/assets/*file               						controllers.Assets.at(path="/public", file)
+
+GET			/climate/searchService 					 			controllers.ClimateServiceController.searchService(email: String ?= "")
+GET 		/climate/getSearchServiceResult				 		controllers.ClimateServiceController.getSearchServiceResult(email: String ?= "")
+
+#Sign Up Page
+GET     /climate/sign                                           controllers.Application.sign()
+POST    /climate/authenticate                                   controllers.Application.authenticate()
+GET     /climate/log                                            controllers.Application.login()
+GET     /cimate/findFriend                                      controllers.Application.findFriend(email: String ?= "")
+GET     /cimate/findFriendResult                                controllers.Application.getFindFriendResult(email: String ?= "")

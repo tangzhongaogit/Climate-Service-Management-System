@@ -1,0 +1,127 @@
+@*******************************************************************************
+ * Licensed to the Apache Software Foundation (ASF) under one or more		   *
+ * contributor license agreements.  See the NOTICE file distributed with	   *
+ * this work for additional information regarding copyright ownership.         *
+ * The ASF licenses this file to You under the Apache License, Version 2.0     *
+ * (the "License"); you may not use this file except in compliance with        *
+ * the License.  You may obtain a copy of the License at                       *
+ *                                                                             *
+ *    http://www.apache.org/licenses/LICENSE-2.0                               *
+ *																			   *
+ * Unless required by applicable law or agreed to in writing, software         *
+ * distributed under the License is distributed on an "AS IS" BASIS,           *
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.    *
+ * See the License for the specific language governing permissions and         *
+ * limitations under the License.											   *
+ *******************************************************************************@
+
+@(url: String)
+
+@import helper._
+
+@scripts = {
+<script type="text/javascript">
+
+	$(document).ready(function(){
+		var obj = document.getElementById("iframe");
+		resizeIframe(obj);
+	});
+
+	function resizeIframe(obj) {
+		obj.style.height = obj.contentWindow.document.body.scrollHeight + 'px';
+	}
+
+    $(function(){
+        var idNumber = 0;
+
+        $("#submitComment").click(function(){
+            var comment = $("#commentActionArea").val();
+            if(comment.length > 0) {
+                idNumber = idNumber + 1;
+                var star_rating = $("#commentRating").val();
+                var date = new Date();
+                var year = date.getFullYear();
+                var month = date.getMonth() + 1;
+                var day = date.getDate();
+                var hours=date.getHours();
+                var minutes = date.getMinutes();
+                if(parseInt(minutes) < 10){
+                    minutes = "0" + minutes;
+                }
+                var seconds =date.getSeconds();
+                $("#post").append("<div id='"+idNumber+"'class='col-md-8 blogShort'></div>");
+                var imgString = "<img id='userIcon' class='pull-left img-responsive thumb margin10 img-thumbnail' src='@routes.Assets.at("images/Usericon.jpg")'>";
+                $("#"+idNumber).append('<h4>By Username</h4>');
+                $("#"+idNumber).append("<input id='rating" +idNumber +"' value="+ star_rating +" class='rating userRating' type='number' data-size='xs' readonly/>");
+                $("#rating"+idNumber).rating('create');
+                $("#"+idNumber).append(imgString);
+                $("#"+idNumber).append("</img>");
+                $("#"+idNumber).append("<article><p>"+comment+"<article></p>");
+                $("#"+idNumber).append("<p class='text-right'>"+year+"-"+month+"-"+day+" "+hours+":"+minutes+":"+seconds+"</p>");
+
+            }
+        });
+    });
+</script>
+}
+
+@main("Service", scripts) {
+    <script type="text/javascript">
+    </script>
+
+    <style>
+        #commentActionArea{
+            resize: none;
+            width: 760px;
+            margin-left: 5px;
+        }
+        #commentActionContainer{
+            border:1px solid #9e9e9e;
+            width: 780px;
+            margin-top: 10px;
+        }
+
+        #commentAction{
+            margin-top: 5px;
+        }
+
+        #userIcon{
+            height: 50px;
+        }
+
+        .text-right{
+            font-size: x-small;
+        }
+
+        .blogShort{
+            border:1px solid dimgray;
+            margin-top: 10px;
+        }
+
+        article{
+            margin-left: 90px;
+        }
+    </style>
+    <iframe id="iframe" width="100%" height="600px" src="@url" frameborder="0" >
+    </iframe>
+
+
+
+    <div id="commentArea" class="container">
+        <div id="post">
+        </div>
+    </div>
+    <div id = "commentActionContainer" class="container pull-left">
+        <div class="row" id="commentAction">
+            <textarea id="commentActionArea" class="form-control animated" placeholder="Enter your comment"></textarea>
+        </div>
+        <div class="row">
+            <div class="col-sm-7 col-md-7">
+                <input id="commentRating" class="rating" type="number" data-size="xs"/>
+            </div>
+            <div class="col-sm-5 col-md-5">
+                <button id="submitComment" class="btn btn-success pull-right">Submit</button>
+            </div>
+        </div>
+    </div>
+}

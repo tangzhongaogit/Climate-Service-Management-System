@@ -1,0 +1,73 @@
+@*******************************************************************************
+ * Licensed to the Apache Software Foundation (ASF) under one or more		   *
+ * contributor license agreements.  See the NOTICE file distributed with	   *
+ * this work for additional information regarding copyright ownership.         *
+ * The ASF licenses this file to You under the Apache License, Version 2.0     *
+ * (the "License"); you may not use this file except in compliance with        *
+ * the License.  You may obtain a copy of the License at                       *
+ *                                                                             *
+ *    http://www.apache.org/licenses/LICENSE-2.0                               *
+ *																			   *
+ * Unless required by applicable law or agreed to in writing, software         *
+ * distributed under the License is distributed on an "AS IS" BASIS,           *
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.    *
+ * See the License for the specific language governing permissions and         *
+ * limitations under the License.											   *
+ *******************************************************************************@ 
+
+@(email: String, vfile: String, dataset: String, climateServices: List[metadata.ClimateService])
+
+@import helper._
+
+@main("Home") {
+<div class="jumbotron">
+	@if(email!= null){
+		<div class="alert alert-success fade in">
+			<strong>You have been registered successfully!</strong>
+			<button class="btn btn-success pull-right" aria-label="Close" data-dismiss="alert">  OK  </button>
+		</div>
+	}
+	<p> Our website is to provide you a quick and easy way to find the
+		<b>Climate Services</b> you want.
+	</p>
+
+	<div class="row">
+		<div class="col-lg-5">
+			<br>
+			<br>
+			<img src="/assets/images/iceberg.jpg" height="400" width="430" />
+		</div>
+		<div class="col-lg-7">
+			<h2>Climate Service List</h2>
+			@for(climateService <- climateServices){
+				<div class="row">
+					<div class="col-md-7"><a href = "@{routes.ClimateServiceController.oneService(climateService.getUrl())}"><font size="3">@climateService.getClimateServiceName()</a></font></div>
+					<span><div class="col-md-3 col-md-offset-2" ><input value ="3.7" class="rating-input" data-size="xs" type="number" readonly/></div></span>
+				</div>
+			}
+
+			<!-- @if(!session.get("username")){ -->
+
+			<p>
+				@if(false){ <a class="btn btn-primary" href="climate/register"
+					role="button">Register &raquo;</a> }
+			</p>
+			<!-- } -->
+		</div>
+	</div>
+</div>
+	<script>
+		jQuery(document).ready(function () {
+			$('.rating-input').rating({
+				min: 0,
+				max: 5,
+				step: 0.1,
+				size: 'xs',
+				showClear: false,
+				showCaption: false,
+				hoverEnabled:false,
+				hoverChangeStars: false
+			});
+	});
+	</script>
+}
